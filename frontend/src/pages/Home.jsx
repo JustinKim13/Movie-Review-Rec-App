@@ -1,96 +1,86 @@
-import { useState, useEffect } from "react";
-import api from "../api";
-import Note from "../components/Note";
-import "../styles/Home.css";
+import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/App.css';
+import MovieList from '../components/MovieList';
+import MovieListHeading from '../components/MovieListHeading';
+import SearchBox from '../components/SearchBox';
+import AddFavorites from '../components/AddFavorites';
+import RemoveFavorites from '../components/RemoveFavorites';
 
-function Home() {
-    const [notes, setNotes] = useState([]);
-    const [content, setContent] = useState("");
-    const [title, setTitle] = useState("");
-    const [priority, setPriority] = useState("low");
+const App = () => {
+	const [movies, setMovies] = useState([]);
+	const [favorites, setFavorites] = useState([]);
+	const [searchValue, setSearchValue] = useState('');
 
-    useEffect(() => {
-        getNotes();
-    }, []);
+	const getMovieRequest = async (searchValue) => {
+		const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=263d22d8`;
 
-    const getNotes = () => {
-        api
-            .get("/api/notes/")
-            .then((res) => res.data)
-            .then((data) => {
-                setNotes(data);
-            })
-            .catch((err) => alert(err));
-    };
+		const response = await fetch(url);
+		const responseJson = await response.json();
 
-    const deleteNote = (id) => {
-        api
-            .delete(`/api/notes/delete/${id}/`)
-            .then((res) => {
-                if (res.status === 204) alert("Note deleted!");
-                else alert("Failed to delete note.");
-                getNotes();
-            })
-            .catch((error) => alert(error));
-    };
+		if (responseJson.Search) {
+			setMovies(responseJson.Search);
+		}
+	};
 
-    const createNote = (e) => {
-        e.preventDefault();
-        api
-            .post("/api/notes/", { title, content, priority })
-            .then((res) => {
-                if (res.status === 201) alert("Note created!");
-                else alert("Failed to make note.");
-                getNotes();
-            })
-            .catch((err) => alert(err));
-    };
+	useEffect(() => {
+		getMovieRequest(searchValue);
+	}, [searchValue]);
 
-    return (
-        <div className="home-container">
-            <div className="notes-section">
-                <h2>Notes</h2>
-                {notes.map((note) => (
-                    <Note note={note} onDelete={deleteNote} key={note.id} />
-                ))}
-            </div>
-            <div className="create-note-section">
-                <h2>Create a Note</h2>
-                <form onSubmit={createNote} className="note-form">
-                    <label htmlFor="title">Title:</label>
-                    <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        required
-                        onChange={(e) => setTitle(e.target.value)}
-                        value={title}
-                    />
-                    <label htmlFor="content">Content:</label>
-                    <textarea
-                        id="content"
-                        name="content"
-                        required
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                    ></textarea>
-                    <label htmlFor="priority">Priority:</label>
-                    <select
-                        id="priority"
-                        name="priority"
-                        value={priority}
-                        onChange={(e) => setPriority(e.target.value)}
-                    >
-                        <option value="high">High</option>
-                        <option value="medium">Medium</option>
-                        <option value="low">Low</option>
-                    </select>
-                    <br />
-                    <input type="submit" value="Submit"></input>
-                </form>
-            </div>
-        </div>
-    );
-}
+	useEffect(() => {
+		const movieFavorites = JSON.parse(
+			localStorage.getItem('react-movie-app-favorites')
+		);
 
-export default Home;
+		if (movieFavorites) {
+			setFavorites(movieFavorites);
+		}
+	}, []);
+
+	const saveToLocalStorage = (items) => {
+		localStorage.setItem('react-movie-app-favorites', JSON.stringify(items));
+	};
+
+	const addFavoriteMovie = (movie) => {
+		const newFavoriteList = [...favorites, movie];
+		setFavorites(newFavoriteList);
+		saveToLocalStorage(newFavoriteList);
+	};
+
+	const removeFavoriteMovie = (movie) => {
+		const newFavoriteList = favorites.filter(
+			(favorite) => favorite.imdbID !== movie.imdbID
+		);
+
+		setFavorites(newFavoriteList);
+		saveToLocalStorage(newFavoriteList);
+	};
+
+	return (
+		<div className='container-fluid movie-app'>
+			<div className='row d-flex align-items-center mt-4 mb-4'>
+				<MovieListHeading heading='Movies' />
+				<SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
+			</div>
+			<div className='row'>
+				<MovieList
+					movies={movies}
+					handleFavoritesClick={addFavoriteMovie}
+					favoriteComponent={AddFavorites}
+				/>
+			</div>
+			<div className='row d-flex align-items-center mt-4 mb-4'>
+				<MovieListHeading heading='Favorites' />
+			</div>
+			<div className='row'>
+				<MovieList
+					movies={favorites}
+					handleFavoritesClick={removeFavoriteMovie}
+					favoriteComponent={RemoveFavorites}
+				/>
+			</div>
+		</div>
+	);
+};
+
+export default App;
