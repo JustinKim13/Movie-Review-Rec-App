@@ -1,20 +1,12 @@
-from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note
+from .models import CustomUser
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ["id", "username", "password"]
+        model = CustomUser
+        fields = ["id", "username", "password", "email"]  # Add any additional fields here
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-        print(validated_data)
-        user = User.objects.create_user(**validated_data)
+        user = CustomUser.objects.create_user(**validated_data)
         return user
-
-class NoteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Note
-        fields = ["id", "title", "content", "priority", "created_at", "author"]
-        extra_kwargs = {"author": {"read_only": True}}
