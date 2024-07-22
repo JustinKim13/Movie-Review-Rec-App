@@ -6,94 +6,133 @@ import MovieListHeading from '../components/MovieListHeading';
 import SearchBox from '../components/SearchBox';
 import AddToList from '../components/AddToList';
 import RemoveFromList from '../components/RemoveFromList';
+import api from '../api';
 
-const App = () => {
-	const [movies, setMovies] = useState([]);
-	const [favorites, setFavorites] = useState([]);
-	const [searchValue, setSearchValue] = useState('');
-	const [ratings, setRatings] = useState({});
+const Home = () => {
+  const [movies, setMovies] = useState([]);
+  const [favorites, setFavorites] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [ratings, setRatings] = useState({});
 
-	const getMovieRequest = async (searchValue) => {
-		const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=263d22d8`;
+  const getMovieRequest = async (searchValue) => {
+    const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=263d22d8`;
+    const response = await fetch(url);
+    const responseJson = await response.json();
 
-		const response = await fetch(url);
-		const responseJson = await response.json();
+    if (responseJson.Search) {
+      setMovies(responseJson.Search);
+    }
+  };
 
-		if (responseJson.Search) {
-			setMovies(responseJson.Search);
-		}
-	};
+  useEffect(() => {
+    if (searchValue) {
+      getMovieRequest(searchValue);
+    }
+  }, [searchValue]);
 
-	useEffect(() => {
-		getMovieRequest(searchValue);
-	}, [searchValue]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const resFavorites = await api.get('/api/movies/');
+        setFavorites(resFavorites.data);
 
-	useEffect(() => {
-		const movieFavorites = JSON.parse(localStorage.getItem('react-movie-app-favorites'));
-		const movieRatings = JSON.parse(localStorage.getItem('react-movie-app-ratings'));
+        const resRatings = await api.get('/api/movies/ratings/');
+        setRatings(resRatings.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-		if (movieFavorites) {
-			setFavorites(movieFavorites);
-		}
-		if (movieRatings) {
-			setRatings(movieRatings);
-		}
-	}, []);
+    fetchData();
+  }, []);
 
-	const saveToLocalStorage = (items, key) => {
-		localStorage.setItem(key, JSON.stringify(items));
-	};
+  const addFavoriteMovie = async (movie) => {
+    const movieData = {
+      imdb_id: movie.imdbID,
+      title: movie.Title,
+      year: movie.Year,
+      rated: movie.Rated,
+      released: movie.Released,
+      runtime: movie.Runtime,
+      genre: movie.Genre,
+      director: movie.Director,
+      writer: movie.Writer,
+      actors: movie.Actors,
+      plot: movie.Plot,
+      language: movie.Language,
+      country: movie.Country,
+      awards: movie.Awards,
+      poster: movie.Poster,
+      metascore: movie.Metascore,
+      imdb_rating: movie.imdbRating,
+      imdb_votes: movie.imdbVotes,
+      type: movie.Type,
+      dvd: movie.DVD,
+      box_office: movie.BoxOffice,
+      production: movie.Production,
+      website: movie.Website,
+      rating: 0 // Default rating value
+    };
 
-	const addFavoriteMovie = (movie) => {
-		const newFavoriteList = [...favorites, movie];
-		setFavorites(newFavoriteList);
-		saveToLocalStorage(newFavoriteList, 'react-movie-app-favorites');
-	};
+    try {
+      const response = await api.post('/api/movies/add/', movieData);
+      console.log('Add response:', response.data);  // Debugging line
+      setFavorites([...favorites, response.data]);
+    } catch (error) {
+      console.error('Error adding movie to list:', error.response ? error.response.data : error);
+    }
+  };
 
-	const removeFavoriteMovie = (movie) => {
-		const newFavoriteList = favorites.filter((favorite) => favorite.imdbID !== movie.imdbID);
+  const removeFavoriteMovie = async (imdbID) => {
+    try {
+      await api.delete(`/api/movies/remove/${imdbID}/`);
+      console.log('Remove successful:', imdbID);  // Debugging line
+      setFavorites(favorites.filter(movie => movie.imdb_id !== imdbID));
+    } catch (error) {
+      console.error('Error removing movie from list:', error);
+    }
+  };
 
-		setFavorites(newFavoriteList);
-		saveToLocalStorage(newFavoriteList, 'react-movie-app-favorites');
-	};
+  const updateRating = async (imdbID, rating) => {
+    try {
+      await api.post(`/api/movies/rate/${imdbID}/`, { rating });
+      setRatings({ ...ratings, [imdbID]: rating });
+    } catch (error) {
+      console.error('Error rating movie:', error);
+    }
+  };
 
-	const updateRating = (imdbID, rating) => {
-		const newRatings = { ...ratings, [imdbID]: rating };
-		setRatings(newRatings);
-		saveToLocalStorage(newRatings, 'react-movie-app-ratings');
-	};
-
-	return (
-		<div className='container-fluid movie-app'>
-			<div className='row d-flex align-items-center mt-4 mb-4'>
-				<MovieListHeading heading='Search a Movie to Review' />
-				<SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
-			</div>
-			<div className='row'>
-				<MovieList
-					movies={movies}
-					handleFavoritesClick={addFavoriteMovie}
-					favoriteComponent={AddToList}
-					showRating={false}
-					ratings={ratings}
-					updateRating={updateRating}
-				/>
-			</div>
-			<div className='row d-flex align-items-center mt-4 mb-4'>
-				<MovieListHeading heading='Your Movies' />
-			</div>
-			<div className='row'>
-				<MovieList
-					movies={favorites}
-					handleFavoritesClick={removeFavoriteMovie}
-					favoriteComponent={RemoveFromList}
-					showRating={true}
-					ratings={ratings}
-					updateRating={updateRating}
-				/>
-			</div>
-		</div>
-	);
+  return (
+    <div className='container-fluid movie-app'>
+      <div className='row d-flex align-items-center mt-4 mb-4'>
+        <MovieListHeading heading='Search a Movie to Review' />
+        <SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
+      </div>
+      <div className='row'>
+        <MovieList
+          movies={movies}
+          handleFavoritesClick={addFavoriteMovie}
+          favoriteComponent={AddToList}
+          showRating={false}
+          ratings={ratings}
+          updateRating={updateRating}
+        />
+      </div>
+      <div className='row d-flex align-items-center mt-4 mb-4'>
+        <MovieListHeading heading='Your Movies' />
+      </div>
+      <div className='row'>
+        <MovieList
+          movies={favorites}
+          handleFavoritesClick={removeFavoriteMovie}
+          favoriteComponent={RemoveFromList}
+          showRating={true}
+          ratings={ratings}
+          updateRating={updateRating}
+        />
+      </div>
+    </div>
+  );
 };
 
-export default App;
+export default Home;
