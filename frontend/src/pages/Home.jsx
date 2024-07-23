@@ -6,6 +6,7 @@ import MovieListHeading from '../components/MovieListHeading';
 import SearchBox from '../components/SearchBox';
 import AddToList from '../components/AddToList';
 import RemoveFromList from '../components/RemoveFromList';
+import SortBar from '../components/SortBar';
 import api from '../api';
 
 const Home = () => {
@@ -13,6 +14,7 @@ const Home = () => {
   const [favorites, setFavorites] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [ratings, setRatings] = useState({});
+  const [sortOption, setSortOption] = useState('rating');
 
   const getMovieRequest = async (searchValue) => {
     const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=263d22d8`;
@@ -37,7 +39,11 @@ const Home = () => {
         setFavorites(resFavorites.data);
 
         const resRatings = await api.get('/api/movies/ratings/');
-        setRatings(resRatings.data);
+        const ratingsData = {};
+        resRatings.data.forEach(rating => {
+          ratingsData[rating.imdb_id] = rating.rating;
+        });
+        setRatings(ratingsData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -76,8 +82,7 @@ const Home = () => {
 
     try {
       const response = await api.post('/api/movies/add/', movieData);
-      console.log('Add response:', response.data);  // Debugging line
-      setFavorites([...favorites, response.data]);
+      setFavorites((prevFavorites) => [...prevFavorites, response.data]);
     } catch (error) {
       console.error('Error adding movie to list:', error.response ? error.response.data : error);
     }
@@ -85,9 +90,10 @@ const Home = () => {
 
   const removeFavoriteMovie = async (imdbID) => {
     try {
+      console.log('Attempting to remove movie with ID:', imdbID);
       await api.delete(`/api/movies/remove/${imdbID}/`);
-      console.log('Remove successful:', imdbID);  // Debugging line
-      setFavorites(favorites.filter(movie => movie.imdb_id !== imdbID));
+      setFavorites((prevFavorites) => prevFavorites.filter(movie => movie.imdb_id !== imdbID));
+      console.log('Movie removed, updating state');
     } catch (error) {
       console.error('Error removing movie from list:', error);
     }
@@ -102,15 +108,40 @@ const Home = () => {
     }
   };
 
+  const sortMovies = (movies, option) => {
+    switch (option) {
+      case 'rating':
+        return [...movies].sort((a, b) => (ratings[b.imdb_id] || 0) - (ratings[a.imdb_id] || 0));
+      case 'title':
+        return [...movies].sort((a, b) => a.title.localeCompare(b.title));
+      case 'year':
+        return [...movies].sort((a, b) => b.year - a.year);
+      default:
+        return movies;
+    }
+  };
+
+  useEffect(() => {
+    console.log('Favorites updated:', favorites);
+  }, [favorites]);
+
   return (
     <div className='container-fluid movie-app'>
       <div className='row d-flex align-items-center mt-4 mb-4'>
         <MovieListHeading heading='Search a Movie to Review' />
         <SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
       </div>
+      <div className='row d-flex align-items-center mt-4 mb-4'>
+        <div className='col'>
+          <MovieListHeading heading='Your Movies' />
+        </div>
+        <div className='col-auto'>
+          <SortBar sortOption={sortOption} setSortOption={setSortOption} />
+        </div>
+      </div>
       <div className='row'>
         <MovieList
-          movies={movies}
+          movies={sortMovies(movies, sortOption)}
           handleFavoritesClick={addFavoriteMovie}
           favoriteComponent={AddToList}
           showRating={false}
@@ -118,12 +149,9 @@ const Home = () => {
           updateRating={updateRating}
         />
       </div>
-      <div className='row d-flex align-items-center mt-4 mb-4'>
-        <MovieListHeading heading='Your Movies' />
-      </div>
       <div className='row'>
         <MovieList
-          movies={favorites}
+          movies={sortMovies(favorites, sortOption)}
           handleFavoritesClick={removeFavoriteMovie}
           favoriteComponent={RemoveFromList}
           showRating={true}

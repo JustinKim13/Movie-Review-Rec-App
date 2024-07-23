@@ -4,10 +4,12 @@ import api from '../api';
 const RemoveFromList = ({ imdbID, onRemove }) => {
   const handleRemove = async () => {
     try {
-      await api.delete(`/api/movies/remove/${imdbID}/`);
+      console.log('Attempting to remove movie with ID:', imdbID);
+      const response = await api.delete(`/api/movies/remove/${imdbID}/`);
+      console.log('API response for removal:', response.status);
       onRemove(imdbID);
     } catch (error) {
-      console.error('Error removing movie from list:', error);
+      console.error('Error removing movie from list:', error.response ? error.response.data : error);
     }
   };
 

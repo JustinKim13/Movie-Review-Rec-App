@@ -5,7 +5,8 @@ const MovieList = (props) => {
   const FavoriteComponent = props.favoriteComponent;
 
   const handleClick = (movie) => {
-    props.handleFavoritesClick(movie.imdbID || movie.imdb_id);
+    console.log('Clicked movie:', movie);
+    props.handleFavoritesClick(movie);
   };
 
   return (

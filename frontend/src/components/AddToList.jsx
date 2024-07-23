@@ -30,11 +30,6 @@ const AddToList = ({ movie, onAdd }) => {
       rating: 0 // Default rating value
     };
 
-    if (!movieData.imdb_id || !movieData.title) {
-      console.error('Movie data is incomplete:', movieData);
-      return;
-    }
-
     try {
       const response = await api.post('/api/movies/add/', movieData);
       onAdd(response.data);
