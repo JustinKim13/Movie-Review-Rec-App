@@ -7,17 +7,21 @@ import SearchBox from '../components/SearchBox';
 import AddToList from '../components/AddToList';
 import RemoveFromList from '../components/RemoveFromList';
 import SortBar from '../components/SortBar';
+import LoadingIndicator from '../components/LoadingIndicator';
 import api from '../api';
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [ratings, setRatings] = useState({});
   const [sortOption, setSortOption] = useState('rating');
+  const [loading, setLoading] = useState(false);
 
   const getMovieRequest = async (searchValue) => {
-    const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=263d22d8`;
+    const apiKey = '1d05ee91'; // Your actual API key
+    const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=${apiKey}`;
     const response = await fetch(url);
     const responseJson = await response.json();
 
@@ -121,23 +125,33 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
-    console.log('Favorites updated:', favorites);
-  }, [favorites]);
+  const refreshRecommendations = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/api/movies/'); // Fetch user's movies
+      const userMovies = res.data;
+
+      if (userMovies.some(movie => movie.rating === null)) {
+        alert("All movies must be rated to get recommendations.");
+        setLoading(false);
+        return;
+      }
+
+      // Send user movies to recommendation API
+      const recommendationsRes = await api.post('/api/recommendations/', { movies: userMovies });
+      setRecommendations(recommendationsRes.data);
+    } catch (error) {
+      console.error('Error fetching recommendations:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className='container-fluid movie-app'>
       <div className='row d-flex align-items-center mt-4 mb-4'>
         <MovieListHeading heading='Search a Movie to Review' />
         <SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
-      </div>
-      <div className='row d-flex align-items-center mt-4 mb-4'>
-        <div className='col'>
-          <MovieListHeading heading='Your Movies' />
-        </div>
-        <div className='col-auto'>
-          <SortBar sortOption={sortOption} setSortOption={setSortOption} />
-        </div>
       </div>
       <div className='row'>
         <MovieList
@@ -149,12 +163,40 @@ const Home = () => {
           updateRating={updateRating}
         />
       </div>
+      <div className='row d-flex align-items-center mt-4 mb-4'>
+        <div className='col'>
+          <MovieListHeading heading='Your Movies' />
+        </div>
+        <div className='col-auto'>
+          <SortBar sortOption={sortOption} setSortOption={setSortOption} />
+        </div>
+      </div>
       <div className='row'>
         <MovieList
           movies={sortMovies(favorites, sortOption)}
           handleFavoritesClick={removeFavoriteMovie}
           favoriteComponent={RemoveFromList}
           showRating={true}
+          ratings={ratings}
+          updateRating={updateRating}
+        />
+      </div>
+      <div className='row d-flex align-items-center mt-4 mb-4'>
+        <div className='col'>
+          <MovieListHeading heading='Recommended Movies' />
+        </div>
+        <div className='col-auto'>
+          <button className='btn btn-primary' onClick={refreshRecommendations} disabled={loading}>
+            {loading ? <LoadingIndicator /> : 'Generate Recommendations'}
+          </button>
+        </div>
+      </div>
+      <div className='row'>
+        <MovieList
+          movies={sortMovies(recommendations, sortOption)}
+          handleFavoritesClick={addFavoriteMovie}
+          favoriteComponent={AddToList}
+          showRating={false}
           ratings={ratings}
           updateRating={updateRating}
         />

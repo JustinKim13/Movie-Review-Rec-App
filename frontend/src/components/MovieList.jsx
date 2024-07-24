@@ -13,7 +13,7 @@ const MovieList = (props) => {
     <>
       {props.movies.map((movie, index) => (
         <div className='image-container d-flex justify-content-start m-3' key={index}>
-          <img src={movie.Poster || movie.poster} alt='movie' />
+          <img src={movie.poster || movie.Poster || movie.Poster_Link} alt='movie' />
           <div className='overlay d-flex flex-column align-items-center justify-content-center'>
             {props.showRating && (
               <div className='star-rating'>
@@ -28,7 +28,7 @@ const MovieList = (props) => {
                 movie={movie}
                 onAdd={props.onAdd}
                 onRemove={props.onRemove}
-                imdbID={movie.imdbID || movie.imdb_id} // Ensure correct movie ID is passed
+                imdbID={movie.imdbID || movie.imdb_id} 
               />
             </div>
           </div>
