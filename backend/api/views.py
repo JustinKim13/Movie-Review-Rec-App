@@ -177,12 +177,22 @@ class RecommendationView(views.APIView):
         recommended_titles = top_recommendations['movie_index'].apply(get_title_from_index)
         recommendations = pd.DataFrame({'Series_Title': recommended_titles})
 
-        recommendations = pd.merge(recommendations, imdb_data[['Series_Title', 'Poster_Link']], on='Series_Title', how='inner')
+        # Check if 'imdb_id' exists in the dataset, if not, fill with placeholder or handle differently
+        if 'imdb_id' in imdb_data.columns:
+            recommendations = pd.merge(recommendations, imdb_data[['Series_Title', 'Poster_Link', 'imdb_id']], on='Series_Title', how='inner')
+        else:
+            recommendations = pd.merge(recommendations, imdb_data[['Series_Title', 'Poster_Link']], on='Series_Title', how='inner')
+            recommendations['imdb_id'] = 'N/A'  # Add a placeholder or handle differently
 
         # If less than 4 recommendations, fill the rest with additional top movies
         if len(recommendations) < 4:
             additional_recs = imdb_data[~imdb_data['Series_Title'].isin(recommendations['Series_Title'])]
-            additional_recs = additional_recs[['Series_Title', 'Poster_Link']].head(4 - len(recommendations))
+            additional_recs = additional_recs[['Series_Title', 'Poster_Link']]
+            if 'imdb_id' in imdb_data.columns:
+                additional_recs = additional_recs[['Series_Title', 'Poster_Link', 'imdb_id']]
+            else:
+                additional_recs['imdb_id'] = 'N/A'  # Add a placeholder or handle differently
+            additional_recs = additional_recs.head(4 - len(recommendations))
             recommendations = pd.concat([recommendations, additional_recs])
 
-        return Response(recommendations[['Series_Title', 'Poster_Link']].to_dict('records'), status=status.HTTP_200_OK)
+        return Response(recommendations[['Series_Title', 'Poster_Link', 'imdb_id']].to_dict('records'), status=status.HTTP_200_OK)
