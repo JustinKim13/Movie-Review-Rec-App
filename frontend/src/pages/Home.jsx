@@ -61,6 +61,7 @@ const Home = () => {
   }, []);
 
   const addFavoriteMovie = (movieData) => {
+    console.log('Adding favorite movie data:', movieData); // Log the movie data being added
     setFavorites((prevFavorites) => {
       const newFavorites = [...prevFavorites];
       const index = newFavorites.findIndex(m => m.title === movieData.title);
@@ -69,13 +70,22 @@ const Home = () => {
       }
       return newFavorites;
     });
-  };
+    setRatings((prevRatings) => {
+      console.log('Adding rating for:', movieData.title); // Log the title for which rating is being added
+      return { ...prevRatings, [movieData.title]: 0 }; // Add default rating
+    });
+  };  
 
   const removeFavoriteMovie = async (title) => {
     try {
       const encodedTitle = encodeURIComponent(title);
       await api.delete(`/api/movies/remove/${encodedTitle}/`);
       setFavorites((prevFavorites) => prevFavorites.filter(movie => movie.title !== title));
+      setRatings((prevRatings) => {
+        const newRatings = { ...prevRatings };
+        delete newRatings[title];
+        return newRatings;
+      });
     } catch (error) {
       console.error('Error removing movie from list:', error);
     }
@@ -83,8 +93,9 @@ const Home = () => {
 
   const updateRating = async (title, rating) => {
     try {
-      await api.post(`/api/movies/rate/${title}/`, { rating });
-      setRatings({ ...ratings, [title]: rating });
+      console.log(`Updating rating for ${title} to ${rating}`);
+      await api.post(`/api/movies/rate/${encodeURIComponent(title)}/`, { rating });
+      setRatings((prevRatings) => ({ ...prevRatings, [title]: rating }));
     } catch (error) {
       console.error('Error rating movie:', error);
     }

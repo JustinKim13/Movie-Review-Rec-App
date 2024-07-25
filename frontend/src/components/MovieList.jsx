@@ -5,8 +5,13 @@ const MovieList = (props) => {
   const FavoriteComponent = props.favoriteComponent;
 
   const handleClick = (movie) => {
-    console.log('Clicked movie:', movie);
+    console.log('Clicked movie:', movie); // Log clicked movie
     props.handleFavoritesClick(movie);
+  };
+
+  const handleRate = (title, rating) => {
+    console.log(`Rating movie: ${title} with rating: ${rating}`); // Log title and rating
+    props.updateRating(title, rating);
   };
 
   return (
@@ -19,7 +24,7 @@ const MovieList = (props) => {
               <div className='star-rating'>
                 <StarRating
                   rating={props.ratings[movie.title] || 0}
-                  onRate={(rating) => props.updateRating(movie.title, rating)}
+                  onRate={(rating) => handleRate(movie.title, rating)}
                 />
               </div>
             )}

@@ -13,6 +13,7 @@ const StarRating = ({ totalStars = 5, rating = 0, onRate }) => {
   };
 
   const handleClick = (index) => {
+    console.log(`Star clicked: ${index + 1}`);
     onRate(index + 1);
   };
 

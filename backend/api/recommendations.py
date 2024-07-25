@@ -11,7 +11,7 @@ def get_recommendations(user_movies):
     imdb_data = load_data()
 
     # Select only necessary columns for features
-    features = imdb_data[['title', 'Genre', 'Director', 'Star1', 'Star2', 'Star3', 'Star4']]
+    features = imdb_data[['Series_Title', 'Genre', 'Director', 'Star1', 'Star2', 'Star3', 'Star4']]
 
     # Fill any missing values with empty strings
     features = features.fillna('')
@@ -29,13 +29,13 @@ def get_recommendations(user_movies):
     # Function to get movie index from title
     def get_index_from_title(title):
         try:
-            return features[features['title'] == title].index.values[0]
+            return features[features['Series_Title'] == title].index.values[0]
         except IndexError:
             return None
 
     # Function to get title from movie index
     def get_title_from_index(index):
-        return features.iloc[index]['title']
+        return features.iloc[index]['Series_Title']
 
     # Calculate the weighted average of similarities based on user ratings
     user_sim_scores = []
@@ -59,6 +59,9 @@ def get_recommendations(user_movies):
 
     # Get the poster URLs for the recommended movies
     recommended_titles = top_recommendations['movie_index'].apply(get_title_from_index)
-    recommendations = pd.merge(recommended_titles, imdb_data[['title', 'Poster_Link']], on='title', how='inner')
+    recommendations = pd.merge(recommended_titles, imdb_data[['Series_Title', 'Poster_Link']], on='Series_Title', how='inner')
 
-    return recommendations[['title', 'Poster_Link']].to_dict(orient='records')
+    # Rename 'Poster_Link' to 'poster'
+    recommendations = recommendations.rename(columns={'Poster_Link': 'poster'})
+
+    return recommendations[['Series_Title', 'poster']].to_dict(orient='records')
