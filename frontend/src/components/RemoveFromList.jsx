@@ -1,13 +1,14 @@
 import React from 'react';
 import api from '../api';
 
-const RemoveFromList = ({ imdbID, onRemove }) => {
+const RemoveFromList = ({ title, onRemove }) => {
   const handleRemove = async () => {
     try {
-      console.log('Attempting to remove movie with ID:', imdbID);
-      const response = await api.delete(`/api/movies/remove/${imdbID}/`);
+      const encodedTitle = encodeURIComponent(title); // Encode the title
+      console.log('Attempting to remove movie with title:', encodedTitle);
+      const response = await api.delete(`/api/movies/remove/${encodedTitle}/`);
       console.log('API response for removal:', response.status);
-      onRemove(imdbID);
+      onRemove(title);
     } catch (error) {
       console.error('Error removing movie from list:', error.response ? error.response.data : error);
     }

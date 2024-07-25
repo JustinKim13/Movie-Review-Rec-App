@@ -26,7 +26,7 @@ class SaveMoviesSerializer(serializers.Serializer):
         for movie_data in movies_data:
             movie, created = Movie.objects.update_or_create(
                 user=user,
-                imdb_id=movie_data['imdb_id'],
+                title=movie_data['title'],
                 defaults=movie_data
             )
             movies.append(movie)

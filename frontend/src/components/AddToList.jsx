@@ -4,8 +4,7 @@ import api from '../api';
 const AddToList = ({ movie, onAdd }) => {
   const handleAdd = async () => {
     const movieData = {
-      imdb_id: movie.IMDB_ID || movie.imdb_id, // Adjust this line
-      title: movie.Series_Title,
+      title: movie.Title,
       year: movie.Year || '',
       rated: movie.Rated || '',
       released: movie.Released || '',
@@ -18,21 +17,22 @@ const AddToList = ({ movie, onAdd }) => {
       language: movie.Language || '',
       country: movie.Country || '',
       awards: movie.Awards || '',
-      poster: movie.Poster_Link,
-      metascore: movie.Meta_score || '',
-      imdb_rating: movie.IMDB_Rating || '',
-      imdb_votes: movie.No_of_Votes || '',
+      poster: movie.Poster,
+      metascore: movie.Metascore || '',
+      imdb_rating: movie.imdbRating || '',
+      imdb_votes: movie.imdbVotes || '',
       type: movie.Type || 'movie',
       dvd: movie.DVD || '',
-      box_office: movie.Gross || '',
+      box_office: movie.BoxOffice || '',
       production: movie.Production || '',
       website: movie.Website || '',
       rating: 0 // Default rating value
     };
 
     try {
-      const response = await api.post('/api/movies/add/', movieData);
-      onAdd(response.data);
+      console.log('Adding movie:', movieData); // Log the movie data being added
+      await api.post('/api/movies/add/', movieData);
+      onAdd(movieData); // Call the onAdd function with the movie data
     } catch (error) {
       console.error('Error adding movie to list:', error.response ? error.response.data : error);
     }

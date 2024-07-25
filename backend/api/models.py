@@ -6,7 +6,6 @@ class CustomUser(AbstractUser):
 
 class Movie(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="movies")
-    imdb_id = models.CharField(max_length=10, unique=True)
     title = models.CharField(max_length=255)
     year = models.CharField(max_length=4)
     rated = models.CharField(max_length=5, null=True, blank=True)

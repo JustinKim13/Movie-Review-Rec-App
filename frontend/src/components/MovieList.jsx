@@ -18,8 +18,8 @@ const MovieList = (props) => {
             {props.showRating && (
               <div className='star-rating'>
                 <StarRating
-                  rating={props.ratings[movie.imdbID || movie.imdb_id] || 0}
-                  onRate={(rating) => props.updateRating(movie.imdbID || movie.imdb_id, rating)}
+                  rating={props.ratings[movie.title] || 0}
+                  onRate={(rating) => props.updateRating(movie.title, rating)}
                 />
               </div>
             )}
@@ -28,7 +28,7 @@ const MovieList = (props) => {
                 movie={movie}
                 onAdd={props.onAdd}
                 onRemove={props.onRemove}
-                imdbID={movie.imdbID || movie.imdb_id} 
+                title={movie.title}
               />
             </div>
           </div>

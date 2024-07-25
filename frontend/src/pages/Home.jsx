@@ -39,13 +39,17 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log('Fetching favorites...');
         const resFavorites = await api.get('/api/movies/');
+        console.log('Favorites fetched:', resFavorites.data);
         setFavorites(resFavorites.data);
 
+        console.log('Fetching ratings...');
         const resRatings = await api.get('/api/movies/ratings/');
+        console.log('Ratings fetched:', resRatings.data);
         const ratingsData = {};
         resRatings.data.forEach(rating => {
-          ratingsData[rating.imdb_id] = rating.rating;
+          ratingsData[rating.title] = rating.rating;
         });
         setRatings(ratingsData);
       } catch (error) {
@@ -56,57 +60,31 @@ const Home = () => {
     fetchData();
   }, []);
 
-  const addFavoriteMovie = async (movie) => {
-    const movieData = {
-      imdb_id: movie.imdb_id,
-      title: movie.Series_Title,
-      year: movie.Year || '',
-      rated: movie.Rated || '',
-      released: movie.Released || '',
-      runtime: movie.Runtime || '',
-      genre: movie.Genre || '',
-      director: movie.Director || '',
-      writer: movie.Writer || '',
-      actors: movie.Actors || '',
-      plot: movie.Plot || '',
-      language: movie.Language || '',
-      country: movie.Country || '',
-      awards: movie.Awards || '',
-      poster: movie.Poster_Link,
-      metascore: movie.Meta_score || '',
-      imdb_rating: movie.IMDB_Rating || '',
-      imdb_votes: movie.No_of_Votes || '',
-      type: movie.Type || 'movie',
-      dvd: movie.DVD || '',
-      box_office: movie.Gross || '',
-      production: movie.Production || '',
-      website: movie.Website || '',
-      rating: 0 // Default rating value
-    };
-
-    try {
-      const response = await api.post('/api/movies/add/', movieData);
-      setFavorites((prevFavorites) => [...prevFavorites, response.data]);
-    } catch (error) {
-      console.error('Error adding movie to list:', error.response ? error.response.data : error);
-    }
+  const addFavoriteMovie = (movieData) => {
+    setFavorites((prevFavorites) => {
+      const newFavorites = [...prevFavorites];
+      const index = newFavorites.findIndex(m => m.title === movieData.title);
+      if (index === -1) {
+        newFavorites.push(movieData);
+      }
+      return newFavorites;
+    });
   };
 
-  const removeFavoriteMovie = async (imdbID) => {
+  const removeFavoriteMovie = async (title) => {
     try {
-      console.log('Attempting to remove movie with ID:', imdbID);
-      await api.delete(`/api/movies/remove/${imdbID}/`);
-      setFavorites((prevFavorites) => prevFavorites.filter(movie => movie.imdb_id !== imdbID));
-      console.log('Movie removed, updating state');
+      const encodedTitle = encodeURIComponent(title);
+      await api.delete(`/api/movies/remove/${encodedTitle}/`);
+      setFavorites((prevFavorites) => prevFavorites.filter(movie => movie.title !== title));
     } catch (error) {
       console.error('Error removing movie from list:', error);
     }
   };
 
-  const updateRating = async (imdbID, rating) => {
+  const updateRating = async (title, rating) => {
     try {
-      await api.post(`/api/movies/rate/${imdbID}/`, { rating });
-      setRatings({ ...ratings, [imdbID]: rating });
+      await api.post(`/api/movies/rate/${title}/`, { rating });
+      setRatings({ ...ratings, [title]: rating });
     } catch (error) {
       console.error('Error rating movie:', error);
     }
@@ -115,7 +93,7 @@ const Home = () => {
   const sortMovies = (movies, option) => {
     switch (option) {
       case 'rating':
-        return [...movies].sort((a, b) => (ratings[b.imdb_id] || 0) - (ratings[a.imdb_id] || 0));
+        return [...movies].sort((a, b) => (ratings[b.title] || 0) - (ratings[a.title] || 0));
       case 'title':
         return [...movies].sort((a, b) => a.title.localeCompare(b.title));
       case 'year':

@@ -21,45 +21,65 @@ class AddMovieView(views.APIView):
 
     def post(self, request):
         data = request.data.copy()
-        data['user'] = request.user  # Directly assign the user instance
+        data['user'] = request.user
 
         logger.debug(f"Request data received: {data}")
 
         try:
+            # Ensure 'title' is in the data payload
+            if 'title' not in data:
+                raise KeyError("Missing field: 'title'")
+            
+            # Check if the movie already exists for the user
             movie, created = Movie.objects.update_or_create(
-                imdb_id=data['imdb_id'], user=request.user,
+                title=data['title'], user=request.user,
                 defaults=data
             )
             if created:
                 logger.debug(f"Movie created: {movie.title}")
+                print(f"Movie created: {movie.title}")
                 return Response(MovieSerializer(movie).data, status=status.HTTP_201_CREATED)
             else:
                 logger.debug(f"Movie updated: {movie.title}")
+                print(f"Movie updated: {movie.title}")
                 return Response(MovieSerializer(movie).data, status=status.HTTP_200_OK)
         except KeyError as e:
             logger.error(f"Missing field: {e}")
+            print(f"Missing field: {e}")
             return Response({"error": f"Missing field: {e}"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error(f"Exception: {e}")
+            print(f"Exception: {e}")
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class RemoveMovieView(views.APIView):
     permission_classes = [IsAuthenticated]
 
-    def delete(self, request, imdb_id):
+    def delete(self, request, title):
         try:
-            movie = Movie.objects.get(imdb_id=imdb_id, user=request.user)
-            movie.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Movie.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            # Decode the title from URL
+            from urllib.parse import unquote
+            decoded_title = unquote(title)
+            print(f"Decoded title: {decoded_title}")
+
+            # Delete all movies with the given title for the current user
+            movies = Movie.objects.filter(title=decoded_title, user=request.user)
+            if movies.exists():
+                movies.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({"error": "Movie not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.error(f"Exception: {e}")
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class RateMovieView(views.APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, imdb_id):
+    def post(self, request, title):
         try:
-            movie = Movie.objects.get(imdb_id=imdb_id, user=request.user)
+            movie = Movie.objects.get(title=title, user=request.user)
             movie.rating = request.data.get('rating')
             movie.save()
             return Response(status=status.HTTP_200_OK)
@@ -88,7 +108,7 @@ class ListRatingsView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        movies = Movie.objects.filter(user=request.user).values('imdb_id', 'rating')
+        movies = Movie.objects.filter(user=request.user).values('title', 'rating')
         return Response(movies, status=status.HTTP_200_OK)
 
 class RecommendationView(views.APIView):
@@ -177,22 +197,6 @@ class RecommendationView(views.APIView):
         recommended_titles = top_recommendations['movie_index'].apply(get_title_from_index)
         recommendations = pd.DataFrame({'Series_Title': recommended_titles})
 
-        # Check if 'imdb_id' exists in the dataset, if not, fill with placeholder or handle differently
-        if 'imdb_id' in imdb_data.columns:
-            recommendations = pd.merge(recommendations, imdb_data[['Series_Title', 'Poster_Link', 'imdb_id']], on='Series_Title', how='inner')
-        else:
-            recommendations = pd.merge(recommendations, imdb_data[['Series_Title', 'Poster_Link']], on='Series_Title', how='inner')
-            recommendations['imdb_id'] = 'N/A'  # Add a placeholder or handle differently
+        recommendations = pd.merge(recommendations, imdb_data[['Series_Title', 'Poster_Link']], on='Series_Title', how='inner')
 
-        # If less than 4 recommendations, fill the rest with additional top movies
-        if len(recommendations) < 4:
-            additional_recs = imdb_data[~imdb_data['Series_Title'].isin(recommendations['Series_Title'])]
-            additional_recs = additional_recs[['Series_Title', 'Poster_Link']]
-            if 'imdb_id' in imdb_data.columns:
-                additional_recs = additional_recs[['Series_Title', 'Poster_Link', 'imdb_id']]
-            else:
-                additional_recs['imdb_id'] = 'N/A'  # Add a placeholder or handle differently
-            additional_recs = additional_recs.head(4 - len(recommendations))
-            recommendations = pd.concat([recommendations, additional_recs])
-
-        return Response(recommendations[['Series_Title', 'Poster_Link', 'imdb_id']].to_dict('records'), status=status.HTTP_200_OK)
+        return Response(recommendations[['Series_Title', 'Poster_Link']].to_dict('records'), status=status.HTTP_200_OK)
