@@ -1,22 +1,25 @@
 import React from 'react';
 import api from '../api';
 
-const RemoveFromList = ({ title, onRemove }) => {
-  const handleRemove = async () => {
+const RemoveFromList = ({ movie, onRemove }) => {
+  const handleRemove = async (e) => {
+    e.stopPropagation(); // Prevent multiple event triggers
     try {
-      const encodedTitle = encodeURIComponent(title); // Encode the title
-      console.log('Attempting to remove movie with title:', encodedTitle);
+      const encodedTitle = encodeURIComponent(movie.title);
+      console.log(`Attempting to remove movie with title: ${encodedTitle}`);
       const response = await api.delete(`/api/movies/remove/${encodedTitle}/`);
       console.log('API response for removal:', response.status);
-      onRemove(title);
+      if (response.status === 204) {
+        onRemove(movie.title); // Ensure the state is updated to reflect the removal
+      }
     } catch (error) {
-      console.error('Error removing movie from list:', error.response ? error.response.data : error);
+      console.error('Error removing movie from list:', error);
     }
   };
 
   return (
     <button onClick={handleRemove}>
-      <span className='mr-2'>Remove</span>
+      <span className='mr-2'>Remove from List</span>
     </button>
   );
 };

@@ -4,12 +4,8 @@ import StarRating from './StarRating';
 const MovieList = (props) => {
   const FavoriteComponent = props.favoriteComponent;
 
-  const handleClick = (movie) => {
-    console.log('Clicked movie:', movie); // Log clicked movie
-    props.handleFavoritesClick(movie);
-  };
-
-  const handleRate = (title, rating) => {
+  const handleRate = (title, rating, e) => {
+    e.stopPropagation(); // Prevent multiple event triggers
     console.log(`Rating movie: ${title} with rating: ${rating}`); // Log title and rating
     props.updateRating(title, rating);
   };
@@ -24,15 +20,15 @@ const MovieList = (props) => {
               <div className='star-rating'>
                 <StarRating
                   rating={props.ratings[movie.title] || 0}
-                  onRate={(rating) => handleRate(movie.title, rating)}
+                  onRate={(rating, e) => handleRate(movie.title, rating, e)}
                 />
               </div>
             )}
-            <div onClick={() => handleClick(movie)}>
+            <div onClick={(e) => { e.stopPropagation(); props.handleFavoritesClick(movie); }}>
               <FavoriteComponent
                 movie={movie}
                 onAdd={props.onAdd}
-                onRemove={props.onRemove}
+                onRemove={props.handleFavoritesClick} // Pass the correct function for removing
                 title={movie.title}
               />
             </div>

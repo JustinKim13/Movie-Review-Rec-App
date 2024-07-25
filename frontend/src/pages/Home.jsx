@@ -74,21 +74,15 @@ const Home = () => {
       console.log('Adding rating for:', movieData.title); // Log the title for which rating is being added
       return { ...prevRatings, [movieData.title]: 0 }; // Add default rating
     });
-  };  
+  };
 
-  const removeFavoriteMovie = async (title) => {
-    try {
-      const encodedTitle = encodeURIComponent(title);
-      await api.delete(`/api/movies/remove/${encodedTitle}/`);
-      setFavorites((prevFavorites) => prevFavorites.filter(movie => movie.title !== title));
-      setRatings((prevRatings) => {
-        const newRatings = { ...prevRatings };
-        delete newRatings[title];
-        return newRatings;
-      });
-    } catch (error) {
-      console.error('Error removing movie from list:', error);
-    }
+  const removeFavoriteMovie = (title) => {
+    setFavorites((prevFavorites) => prevFavorites.filter(movie => movie.title !== title));
+    setRatings((prevRatings) => {
+      const newRatings = { ...prevRatings };
+      delete newRatings[title];
+      return newRatings;
+    });
   };
 
   const updateRating = async (title, rating) => {
@@ -150,6 +144,7 @@ const Home = () => {
           showRating={false}
           ratings={ratings}
           updateRating={updateRating}
+          onAdd={addFavoriteMovie} // Pass onAdd to MovieList
         />
       </div>
       <div className='row d-flex align-items-center mt-4 mb-4'>
@@ -168,6 +163,8 @@ const Home = () => {
           showRating={true}
           ratings={ratings}
           updateRating={updateRating}
+          onAdd={addFavoriteMovie} // Pass onAdd to MovieList
+          onRemove={removeFavoriteMovie} // Pass onRemove to MovieList
         />
       </div>
       <div className='row d-flex align-items-center mt-4 mb-4'>
@@ -188,6 +185,7 @@ const Home = () => {
           showRating={false}
           ratings={ratings}
           updateRating={updateRating}
+          onAdd={addFavoriteMovie} // Pass onAdd to MovieList
         />
       </div>
     </div>

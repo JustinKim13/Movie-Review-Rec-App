@@ -2,7 +2,8 @@ import React from 'react';
 import api from '../api';
 
 const AddToList = ({ movie, onAdd }) => {
-  const handleAdd = async () => {
+  const handleAdd = async (e) => {
+    e.stopPropagation(); // Prevent multiple event triggers
     const movieData = {
       title: movie.Title || movie.Series_Title || movie.title, // Ensure title is set correctly
       year: movie.Year || movie.Released_Year || '',
