@@ -9,6 +9,7 @@ import RemoveFromList from '../components/RemoveFromList';
 import SortBar from '../components/SortBar';
 import LoadingIndicator from '../components/LoadingIndicator';
 import api from '../api';
+import UserMenu from '../components/UserMenu';
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
@@ -18,6 +19,7 @@ const Home = () => {
   const [ratings, setRatings] = useState({});
   const [sortOption, setSortOption] = useState('rating');
   const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState('User'); // Add logic to fetch the actual username
 
   const getMovieRequest = async (searchValue) => {
     const apiKey = '1d05ee91'; // Your actual API key
@@ -132,8 +134,15 @@ const Home = () => {
 
   return (
     <div className='container-fluid movie-app'>
-      <div className='row d-flex align-items-center mt-4 mb-4'>
+      <div className='row justify-content-end'>
+        <div className='col-auto'>
+          <UserMenu username={username} />
+        </div>
+      </div>
+      <div className='row justify-content-center mt-2'>
         <MovieListHeading heading='Search a Movie to Review' />
+      </div>
+      <div className='row justify-content-center mt-2'>
         <SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
       </div>
       <div className='row'>
