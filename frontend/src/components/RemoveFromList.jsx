@@ -18,7 +18,7 @@ const RemoveFromList = ({ movie, onRemove }) => {
   };
 
   return (
-    <button onClick={handleRemove}>
+    <button className="remove-from-list-btn" onClick={handleRemove}>
       <span className='mr-2'>Remove from List</span>
     </button>
   );

@@ -43,7 +43,7 @@ const AddToList = ({ movie, onAdd }) => {
   };
 
   return (
-    <button onClick={handleAdd}>
+    <button className="add-to-list-btn" onClick={handleAdd}>
       <span className='mr-2'>Add to List</span>
     </button>
   );

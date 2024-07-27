@@ -11,7 +11,6 @@ const SortBar = ({ sortOption, setSortOption }) => {
         style={{ padding: '5px', borderRadius: '5px', border: '1px solid #ccc' }}
       >
         <option value="rating">Rating</option>
-        <option value="title">Title</option>
         <option value="year">Year</option>
       </select>
     </div>

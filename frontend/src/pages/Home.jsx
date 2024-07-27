@@ -139,7 +139,7 @@ const Home = () => {
           <UserMenu username={username} />
         </div>
         <div className='intro-content'>
-          <h1>Start Reviewing Now</h1>
+          <h1>Trending Movies</h1>
           <div className='carousel-container'>
             <TrendingCarousel />
           </div>
@@ -195,11 +195,11 @@ const Home = () => {
       </div>
 
       <div className='section recommendations-section' id="recommendations">
-        <div className='row d-flex align-items-center mt-4 mb-4'>
-          <div className='col'>
-            <MovieListHeading heading='Recommended Movies' />
-          </div>
-          <div className='col-auto'>
+        <div className='row justify-content-center mt-4'>
+          <MovieListHeading heading='Recommended Movies' />
+        </div>
+        <div className='row justify-content-center mt-2'>
+          <div className='recommendations-button-container'>
             <button className='btn btn-primary' onClick={refreshRecommendations} disabled={loading}>
               {loading ? <LoadingIndicator /> : 'Generate Recommendations'}
             </button>
@@ -222,4 +222,3 @@ const Home = () => {
 };
 
 export default Home;
-
