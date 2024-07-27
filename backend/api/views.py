@@ -116,14 +116,11 @@ class RecommendationView(views.APIView):
 
     def post(self, request):
         user_id = request.user.id
-        print(f"Logged in user ID: {user_id}")
 
         # Fetch movies for the logged-in user
         user_movies = list(Movie.objects.filter(user_id=user_id).values())
         if not user_movies:
             return Response({"error": "No movies found for this user"}, status=status.HTTP_400_BAD_REQUEST)
-
-        print(f"User Movies from DB: {user_movies}")
 
         try:
             imdb_data_path = os.path.join(os.path.dirname(__file__), 'data', 'imdb_top_1000.csv')
@@ -147,8 +144,6 @@ class RecommendationView(views.APIView):
 
         # Merge datasets on movie title to get a combined dataset
         combined_data = pd.merge(user_df, imdb_data, on='Series_Title', how='inner')
-        print(f"Combined Data:\n{combined_data.head()}")
-        print(f"Number of combined entries: {len(combined_data)}")
 
         # If the combined data is empty, use top IMDB movies as fallback
         if combined_data.empty:

@@ -10,6 +10,7 @@ import SortBar from '../components/SortBar';
 import LoadingIndicator from '../components/LoadingIndicator';
 import api from '../api';
 import UserMenu from '../components/UserMenu';
+import TrendingCarousel from '../components/TrendingCarousel';
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
@@ -19,10 +20,10 @@ const Home = () => {
   const [ratings, setRatings] = useState({});
   const [sortOption, setSortOption] = useState('rating');
   const [loading, setLoading] = useState(false);
-  const [username, setUsername] = useState('User'); // Add logic to fetch the actual username
+  const [username, setUsername] = useState('');
 
   const getMovieRequest = async (searchValue) => {
-    const apiKey = '1d05ee91'; // Your actual API key
+    const apiKey = '1d05ee91';
     const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=${apiKey}`;
     const response = await fetch(url);
     const responseJson = await response.json();
@@ -63,7 +64,7 @@ const Home = () => {
   }, []);
 
   const addFavoriteMovie = (movieData) => {
-    console.log('Adding favorite movie data:', movieData); // Log the movie data being added
+    console.log('Adding favorite movie data:', movieData);
     setFavorites((prevFavorites) => {
       const newFavorites = [...prevFavorites];
       const index = newFavorites.findIndex(m => m.title === movieData.title);
@@ -73,8 +74,8 @@ const Home = () => {
       return newFavorites;
     });
     setRatings((prevRatings) => {
-      console.log('Adding rating for:', movieData.title); // Log the title for which rating is being added
-      return { ...prevRatings, [movieData.title]: 0 }; // Add default rating
+      console.log('Adding rating for:', movieData.title);
+      return { ...prevRatings, [movieData.title]: 0 };
     });
   };
 
@@ -113,7 +114,7 @@ const Home = () => {
   const refreshRecommendations = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/api/movies/'); // Fetch user's movies
+      const res = await api.get('/api/movies/');
       const userMovies = res.data;
 
       if (userMovies.some(movie => movie.rating === null)) {
@@ -122,7 +123,6 @@ const Home = () => {
         return;
       }
 
-      // Send user movies to recommendation API
       const recommendationsRes = await api.post('/api/recommendations/', { movies: userMovies });
       setRecommendations(recommendationsRes.data);
     } catch (error) {
@@ -134,13 +134,18 @@ const Home = () => {
 
   return (
     <div className='container-fluid movie-app'>
+      <div className='row'>
+        <div className='carousel-container'>
+          <TrendingCarousel />
+        </div>
+      </div>
       <div className='row justify-content-end'>
         <div className='col-auto'>
           <UserMenu username={username} />
         </div>
       </div>
-      <div className='row justify-content-center mt-2'>
-        <MovieListHeading heading='Search a Movie to Review' />
+      <div className='row justify-content-center mt-4 movie-list-heading'>
+        <MovieListHeading heading='Search a Movie to Review' className="movie-list-heading" />
       </div>
       <div className='row justify-content-center mt-2'>
         <SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
@@ -153,13 +158,15 @@ const Home = () => {
           showRating={false}
           ratings={ratings}
           updateRating={updateRating}
-          onAdd={addFavoriteMovie} // Pass onAdd to MovieList
+          onAdd={addFavoriteMovie}
         />
       </div>
-      <div className='row d-flex align-items-center mt-4 mb-4'>
-        <div className='col'>
+      <div className='row justify-content-center mt-4'>
+        <div className='col text-center'>
           <MovieListHeading heading='Your Movies' />
         </div>
+      </div>
+      <div className='row justify-content-center mt-2'>
         <div className='col-auto'>
           <SortBar sortOption={sortOption} setSortOption={setSortOption} />
         </div>
@@ -172,8 +179,8 @@ const Home = () => {
           showRating={true}
           ratings={ratings}
           updateRating={updateRating}
-          onAdd={addFavoriteMovie} // Pass onAdd to MovieList
-          onRemove={removeFavoriteMovie} // Pass onRemove to MovieList
+          onAdd={addFavoriteMovie}
+          onRemove={removeFavoriteMovie}
         />
       </div>
       <div className='row d-flex align-items-center mt-4 mb-4'>
@@ -194,7 +201,7 @@ const Home = () => {
           showRating={false}
           ratings={ratings}
           updateRating={updateRating}
-          onAdd={addFavoriteMovie} // Pass onAdd to MovieList
+          onAdd={addFavoriteMovie}
         />
       </div>
     </div>

@@ -7,7 +7,9 @@ import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import AddToList from './components/AddToList';
 import RemoveFromList from './components/RemoveFromList';
-import api from './api'; // Correct import path
+import api from './api'; 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function Logout() {
   localStorage.clear();
