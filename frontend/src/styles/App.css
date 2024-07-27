@@ -1,18 +1,62 @@
 body {
   background: #141414;
   color: #ffffff;
+  overflow-x: hidden;
 }
 
-.movie-app > .row {
+.movie-app > .section {
+  height: 90vh;  
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.movie-app .movie-row {
   overflow-x: auto;
+  display: flex;
   flex-wrap: nowrap;
+  padding: 20px;
+}
+
+.intro-content {
+  text-align: center;
+  width: 100%;
+}
+
+.carousel-container {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.logout-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.scroll-down-arrow {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  cursor: pointer;
+  color: #ffffff;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.scroll-down-arrow:hover {
+  transform: translateX(-50%) scale(1.2);
 }
 
 .image-container {
   position: relative;
   transition: transform 0.2s;
   width: 300px;
-  margin: auto;
+  margin: 10px;
 }
 
 .image-container img {
@@ -71,8 +115,6 @@ body {
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
-  margin-right: 10px;
-  margin-top: 30px;
 }
 
 .search-container {
@@ -104,11 +146,6 @@ body {
 .carousel-item img {
   height: 300px;
   object-fit: cover;
-}
-
-.carousel-container {
-  width: 100%;
-  margin: 0;
 }
 
 .movie-list-heading {

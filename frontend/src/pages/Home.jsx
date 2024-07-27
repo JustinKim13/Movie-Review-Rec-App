@@ -134,78 +134,92 @@ const Home = () => {
 
   return (
     <div className='container-fluid movie-app'>
-      <div className='row'>
-        <div className='carousel-container'>
-          <TrendingCarousel />
-        </div>
-      </div>
-      <div className='row justify-content-end'>
-        <div className='col-auto'>
+      <div className='section' id="intro">
+        <div className='logout-button'>
           <UserMenu username={username} />
         </div>
-      </div>
-      <div className='row justify-content-center mt-4 movie-list-heading'>
-        <MovieListHeading heading='Search a Movie to Review' className="movie-list-heading" />
-      </div>
-      <div className='row justify-content-center mt-2'>
-        <SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
-      </div>
-      <div className='row'>
-        <MovieList
-          movies={sortMovies(movies, sortOption)}
-          handleFavoritesClick={addFavoriteMovie}
-          favoriteComponent={AddToList}
-          showRating={false}
-          ratings={ratings}
-          updateRating={updateRating}
-          onAdd={addFavoriteMovie}
-        />
-      </div>
-      <div className='row justify-content-center mt-4'>
-        <div className='col text-center'>
-          <MovieListHeading heading='Your Movies' />
+        <div className='intro-content'>
+          <h1>Start Reviewing Now</h1>
+          <div className='carousel-container'>
+            <TrendingCarousel />
+          </div>
         </div>
+        <a href="#search" className="scroll-down-arrow">↓</a>
       </div>
-      <div className='row justify-content-center mt-2'>
-        <div className='col-auto'>
-          <SortBar sortOption={sortOption} setSortOption={setSortOption} />
+
+      <div className='section' id="search">
+        <div className='row justify-content-center mt-4 movie-list-heading'>
+          <MovieListHeading heading='Search a Movie to Review' className="movie-list-heading" />
         </div>
-      </div>
-      <div className='row'>
-        <MovieList
-          movies={sortMovies(favorites, sortOption)}
-          handleFavoritesClick={removeFavoriteMovie}
-          favoriteComponent={RemoveFromList}
-          showRating={true}
-          ratings={ratings}
-          updateRating={updateRating}
-          onAdd={addFavoriteMovie}
-          onRemove={removeFavoriteMovie}
-        />
-      </div>
-      <div className='row d-flex align-items-center mt-4 mb-4'>
-        <div className='col'>
-          <MovieListHeading heading='Recommended Movies' />
+        <div className='row justify-content-center mt-2'>
+          <SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
         </div>
-        <div className='col-auto'>
-          <button className='btn btn-primary' onClick={refreshRecommendations} disabled={loading}>
-            {loading ? <LoadingIndicator /> : 'Generate Recommendations'}
-          </button>
+        <div className='row movie-row'>
+          <MovieList
+            movies={sortMovies(movies, sortOption)}
+            handleFavoritesClick={addFavoriteMovie}
+            favoriteComponent={AddToList}
+            showRating={false}
+            ratings={ratings}
+            updateRating={updateRating}
+            onAdd={addFavoriteMovie}
+          />
         </div>
+        <a href="#favorites" className="scroll-down-arrow">↓</a>
       </div>
-      <div className='row'>
-        <MovieList
-          movies={sortMovies(recommendations, sortOption)}
-          handleFavoritesClick={addFavoriteMovie}
-          favoriteComponent={AddToList}
-          showRating={false}
-          ratings={ratings}
-          updateRating={updateRating}
-          onAdd={addFavoriteMovie}
-        />
+
+      <div className='section' id="favorites">
+        <div className='row justify-content-center mt-4'>
+          <div className='col text-center'>
+            <MovieListHeading heading='Your Movies' />
+          </div>
+        </div>
+        <div className='row justify-content-center mt-2'>
+          <div className='col-auto'>
+            <SortBar sortOption={sortOption} setSortOption={setSortOption} />
+          </div>
+        </div>
+        <div className='row movie-row'>
+          <MovieList
+            movies={sortMovies(favorites, sortOption)}
+            handleFavoritesClick={removeFavoriteMovie}
+            favoriteComponent={RemoveFromList}
+            showRating={true}
+            ratings={ratings}
+            updateRating={updateRating}
+            onAdd={addFavoriteMovie}
+            onRemove={removeFavoriteMovie}
+          />
+        </div>
+        <a href="#recommendations" className="scroll-down-arrow">↓</a>
+      </div>
+
+      <div className='section recommendations-section' id="recommendations">
+        <div className='row d-flex align-items-center mt-4 mb-4'>
+          <div className='col'>
+            <MovieListHeading heading='Recommended Movies' />
+          </div>
+          <div className='col-auto'>
+            <button className='btn btn-primary' onClick={refreshRecommendations} disabled={loading}>
+              {loading ? <LoadingIndicator /> : 'Generate Recommendations'}
+            </button>
+          </div>
+        </div>
+        <div className='row movie-row'>
+          <MovieList
+            movies={sortMovies(recommendations, sortOption)}
+            handleFavoritesClick={addFavoriteMovie}
+            favoriteComponent={AddToList}
+            showRating={false}
+            ratings={ratings}
+            updateRating={updateRating}
+            onAdd={addFavoriteMovie}
+          />
+        </div>
       </div>
     </div>
   );
 };
 
 export default Home;
+
