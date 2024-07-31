@@ -137,3 +137,6 @@ CORS_ALLOWS_CREDENTIALS = True
 
 # Custom user model
 AUTH_USER_MODEL = "api.CustomUser"
+
+
+from .settings_psh import *
