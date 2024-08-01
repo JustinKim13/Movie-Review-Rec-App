@@ -31,8 +31,8 @@ This is a full-stack movie review and personalized recommendation application bu
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/JustinKim13/Note-Creator-Full-Stack-App.git
-   cd Note-Creator-Full-Stack-App
+   git clone https://github.com/JustinKim13/Movie-Review-Rec-App.git
+   cd Movie-Review-Rec-App
     ```
 2. **Navigate to the backend directory**:
    ```bash
