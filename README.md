@@ -64,6 +64,13 @@ This is a full-stack movie review and personalized recommendation application bu
    DB_PWD='your_database_password'
    SECRET_KEY='your_secret_key'
     ```
+
+7. **Run migrations**:
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+    ```
+   
 7. **Run the server**:
    ```bash
    python manage.py runserver
