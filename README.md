@@ -1,14 +1,15 @@
-# Note-Creator-Full-Stack-App
+# Movie Review + Personalized Recommendation Full-stack App
 
-This is a full-stack note-creating application built with Django for the backend and React for the frontend.
+This is a full-stack movie review and personalized recommendation application built with Django for the backend and React for the frontend.
 
 ## Features
 
-- User authentication (register, login, logout)
-- Create, read, update, and delete notes
-- Responsive design
-- JWT-based authentication
-- Axios for API requests
+- **User Authentication**: Register, login, and logout using JWT-based authentication.
+- **Movie Management**: Users can add, rate/review, and delete movies from their list.
+- **Search Functionality**: Real-time search results as you type.
+- **Trending Movies Carousel**: A sliding carousel showcasing trending movies.
+- **Recommendation Engine**: Personalized movie suggestions based on user ratings and movie metrics using scikit-learn's cosine similarity. Does not recommend movies already in the user's list.
+- **Persistent Data**: All movies and ratings are actively saved.
 
 ## Technologies Used
 
@@ -17,6 +18,12 @@ This is a full-stack note-creating application built with Django for the backend
 - **Database**: PostgreSQL
 - **Environment**: Virtualenv, Vite
 - **Version Control**: Git
+
+## Prerequisites
+
+- Python: Version 3.8 or above
+- Node.js: Version 14 or above
+- PostgreSQL: Version 12 or above
 
 ## Setup Instructions
 
@@ -93,3 +100,12 @@ This is a full-stack note-creating application built with Django for the backend
    ```bash
    python manage.py runserver
     ```
+
+## Troubleshooting
+
+- Database Connection Issues: Ensure PostgreSQL is running and credentials in settings.py are correct.
+- CORS Issues: Ensure the frontend URL is added to the allowed origins in the backend settings.
+
+## Future Improvements
+- Deployment using Docker and AWS.
+- Additional features like user profiles and movie recommendations based on genres.
