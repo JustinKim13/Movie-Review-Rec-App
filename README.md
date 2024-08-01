@@ -50,7 +50,21 @@ This is a full-stack movie review and personalized recommendation application bu
    pip install -r requirements.txt
     ```
 
-5. **Run the server**:
+5. **Create a .env file in the backend directory**:
+   ```bash
+   touch backend/.env
+    ```
+   
+6. **Add the following contents with your own database credentials**:
+   ```bash
+   DB_HOST='your_database_host'
+   DB_PORT='your_database_port'
+   DB_USER='your_database_user'
+   DB_NAME='your_database_name'
+   DB_PWD='your_database_password'
+   SECRET_KEY='your_secret_key'
+    ```
+7. **Run the server**:
    ```bash
    python manage.py runserver
     ```
@@ -81,7 +95,7 @@ This is a full-stack movie review and personalized recommendation application bu
 
 2. **Install dependencies**:
    ```bash
-   npm install axios react-router-dom jwt-decode
+   npm install axios react-router-dom jwt-decode vite @vitejs/plugin-react react-icons --save-dev
     ```
 
 3. **Run development server**:
