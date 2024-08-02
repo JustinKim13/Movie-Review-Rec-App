@@ -1,4 +1,13 @@
 {
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "A React frontend for the movie review app",
+  "main": "index.js",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
@@ -7,6 +16,17 @@
     "bootstrap": "^5.3.3",
     "react-bootstrap": "^2.10.4",
     "react-slick": "^0.30.2",
-    "slick-carousel": "^1.8.1"
-  }
+    "slick-carousel": "^1.8.1",
+    "react-router-dom": "^6.8.0",
+    "jwt-decode": "^3.1.2",
+    "react-icons": "^4.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "vite": "^2.4.4",
+    "@vitejs/plugin-react": "^1.0.7"
+  },
+  "author": "",
+  "license": "ISC"
 }
