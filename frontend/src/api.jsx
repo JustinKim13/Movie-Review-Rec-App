@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ACCESS_TOKEN } from "./constants";
 
-const apiUrl = "http://127.0.0.1:8000"; // Ensure this is the correct URL
+const apiUrl = "http://backend-justin-9984093e2662.herokuapp.com"; // Ensure this is the correct URL
 
 const api = axios.create({
   baseURL: apiUrl,
