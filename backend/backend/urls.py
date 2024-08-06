@@ -5,7 +5,7 @@ from api.views import CreateUserView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("api.urls")),  # Include the URLs from the api app
+    path("api/", include("api.urls")), 
     path("api/user/register/", CreateUserView.as_view(), name="register"),
     path("api/token/", TokenObtainPairView.as_view(), name="get_token"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),

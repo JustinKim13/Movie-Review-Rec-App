@@ -10,7 +10,7 @@ const RemoveFromList = ({ movie, onRemove }) => {
       const response = await api.delete(`/api/movies/remove/${encodedTitle}/`);
       console.log('API response for removal:', response.status);
       if (response.status === 204) {
-        onRemove(movie.title); // Ensure the state is updated to reflect the removal
+        onRemove(movie.title); 
       }
     } catch (error) {
       console.error('Error removing movie from list:', error);

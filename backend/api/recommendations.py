@@ -2,21 +2,17 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Function to load data (ensure the path is correct)
 def load_data():
-    return pd.read_csv('backend/data/imdb_top_1000.csv')  # Update the path as needed
+    return pd.read_csv('backend/data/imdb_top_1000.csv') 
 
 def get_recommendations(user_movies):
-    # Load IMDB data
     imdb_data = load_data()
 
-    # Select only necessary columns for features
+    # Everything else comes out null from api, so we'll just use these features
     features = imdb_data[['Series_Title', 'Genre', 'Director', 'Star1', 'Star2', 'Star3', 'Star4']]
-
-    # Fill any missing values with empty strings
+    
+    # Fill missing values and combine into string
     features = features.fillna('')
-
-    # Combine features into a single string
     features['combined_features'] = features.apply(lambda row: ' '.join(row.values.astype(str)), axis=1)
 
     # Create the CountVectorizer matrix
@@ -26,7 +22,7 @@ def get_recommendations(user_movies):
     # Compute the Cosine Similarity matrix
     cosine_sim = cosine_similarity(count_matrix)
 
-    # Function to get movie index from title
+    # Get movie index from title
     def get_index_from_title(title):
         try:
             return features[features['Series_Title'] == title].index.values[0]
@@ -49,7 +45,7 @@ def get_recommendations(user_movies):
     user_sim_scores = pd.DataFrame(user_sim_scores, columns=['movie_index', 'score'])
     user_sim_scores = user_sim_scores.groupby('movie_index').sum().reset_index()
 
-    # Remove movies already rated by the user
+    # Remove movies already rated by the user (can't recommend a movie already rated)
     rated_indices = [get_index_from_title(movie['title']) for movie in user_movies]
     user_sim_scores = user_sim_scores[~user_sim_scores['movie_index'].isin(rated_indices)]
 
@@ -61,7 +57,7 @@ def get_recommendations(user_movies):
     recommended_titles = top_recommendations['movie_index'].apply(get_title_from_index)
     recommendations = pd.merge(recommended_titles, imdb_data[['Series_Title', 'Poster_Link']], on='Series_Title', how='inner')
 
-    # Rename 'Poster_Link' to 'poster'
-    recommendations = recommendations.rename(columns={'Poster_Link': 'poster'})
+    # Rename 'Poster_Link' to 'poster' to fit our dataset in postgres
+    recommendations = recommendations.rename(columns={'Poster_Link': 'poster'}) 
+    return recommendations[['Series_Title', 'poster']].to_dict(orient='records') # Our recommendations are given as the title and poster, so they can be displayed and added to postgres
 
-    return recommendations[['Series_Title', 'poster']].to_dict(orient='records')

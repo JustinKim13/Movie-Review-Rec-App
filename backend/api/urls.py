@@ -7,7 +7,7 @@ from .views import (
     SaveMoviesView,
     ListMoviesView,
     ListRatingsView,
-    RecommendationView  # Ensure this is imported
+    RecommendationView  
 )
 
 urlpatterns = [
@@ -18,5 +18,5 @@ urlpatterns = [
     path('movies/save/', SaveMoviesView.as_view(), name='save_movies'),
     path('movies/', ListMoviesView.as_view(), name='list_movies'),
     path('movies/ratings/', ListRatingsView.as_view(), name='list_ratings'),
-    path('recommendations/', RecommendationView.as_view(), name='recommendations'),  # Ensure this is included
+    path('recommendations/', RecommendationView.as_view(), name='recommendations'),  
 ]

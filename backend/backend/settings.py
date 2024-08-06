@@ -2,11 +2,10 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
-import dj_database_url  # Add this import
+import dj_database_url  
 
-load_dotenv()  # Load environment variables from .env file
+load_dotenv()  
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -56,7 +55,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",  # Add CORS middleware
+    "corsheaders.middleware.CorsMiddleware",  
 ]
 
 ROOT_URLCONF = "backend.urls"

@@ -28,7 +28,7 @@ const MovieList = (props) => {
               <FavoriteComponent
                 movie={movie}
                 onAdd={props.onAdd}
-                onRemove={props.handleFavoritesClick} // Pass the correct function for removing
+                onRemove={props.handleFavoritesClick} 
                 title={movie.title}
               />
             </div>

@@ -1,11 +1,11 @@
 body {
   background: #141414;
   color: #ffffff;
-  overflow-x: hidden; /* Ensure no horizontal overflow on the body */
+  overflow-x: hidden; 
 }
 
 .movie-app {
-  overflow-x: hidden; /* Ensure no horizontal overflow on the movie app */
+  overflow-x: hidden; 
 }
 
 .movie-app > .section {
@@ -63,7 +63,7 @@ body {
 
 .scroll-down-arrow {
   position: absolute;
-  bottom: -10px; /* Adjust this value to move the arrow further down */
+  bottom: -10px; 
   left: 50%;
   transform: translateX(-50%);
   font-size: 2rem;
@@ -174,7 +174,7 @@ body {
 }
 
 .movie-list-heading {
-  margin-top: 50px; /* Adjust as needed */
+  margin-top: 50px; 
   display: flex;
   justify-content: center;
 }
@@ -194,41 +194,41 @@ body {
 }
 
 .recommendations-button-container .btn {
-  width: auto; /* Adjust the width of the button as needed */
+  width: auto; 
 }
 
 .add-to-list-btn, .remove-from-list-btn {
-  background-color: #007bff; /* Button background color */
-  color: #fff; /* Button text color */
-  border: none; /* Remove default border */
-  padding: 10px 20px; /* Padding inside the button */
-  font-size: 16px; /* Font size */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-  transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
+  background-color: #007bff; 
+  color: #fff; 
+  border: none; 
+  padding: 10px 20px; 
+  font-size: 16px; 
+  border-radius: 5px; 
+  cursor: pointer; 
+  transition: background-color 0.3s, box-shadow 0.3s; 
 }
 
 .add-to-list-btn:hover, .remove-from-list-btn:hover {
-  background-color: #0056b3; /* Darker background on hover */
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect on hover */
+  background-color: #0056b3; 
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); 
 }
 
 .add-to-list-btn:focus, .remove-from-list-btn:focus {
-  outline: none; /* Remove focus outline */
+  outline: none; 
 }
 
 .add-to-list-btn {
-  background-color: #28a745; /* Green color for add button */
+  background-color: #28a745; 
 }
 
 .add-to-list-btn:hover {
-  background-color: #218838; /* Darker green on hover */
+  background-color: #218838; 
 }
 
 .remove-from-list-btn {
-  background-color: #dc3545; /* Red color for remove button */
+  background-color: #dc3545; 
 }
 
 .remove-from-list-btn:hover {
-  background-color: #c82333; /* Darker red on hover */
+  background-color: #c82333; 
 }

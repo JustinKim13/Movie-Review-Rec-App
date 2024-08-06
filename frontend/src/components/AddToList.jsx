@@ -5,7 +5,7 @@ const AddToList = ({ movie, onAdd }) => {
   const handleAdd = async (e) => {
     e.stopPropagation(); // Prevent multiple event triggers
     const movieData = {
-      title: movie.Title || movie.Series_Title || movie.title, // Ensure title is set correctly
+      title: movie.Title || movie.Series_Title || movie.title, 
       year: movie.Year || movie.Released_Year || '',
       rated: movie.Rated || movie.Certificate || '',
       released: movie.Released || '',
@@ -18,7 +18,7 @@ const AddToList = ({ movie, onAdd }) => {
       language: movie.Language || '',
       country: movie.Country || '',
       awards: movie.Awards || '',
-      poster: movie.Poster || movie.Poster_Link, // Ensure the correct field is mapped
+      poster: movie.Poster || movie.Poster_Link, 
       metascore: movie.Metascore || movie.Meta_score || '',
       imdb_rating: movie.imdbRating || movie.IMDB_Rating || '',
       imdb_votes: movie.imdbVotes || '',
@@ -35,7 +35,7 @@ const AddToList = ({ movie, onAdd }) => {
     try {
       console.log('Adding movie:', movieData); // Log the movie data being added
       const response = await api.post('/api/movies/add/', movieData);
-      console.log('Movie added response:', response.data); // Log the response from the backend
+      console.log('Movie added response:', response.data); 
       onAdd(response.data); // Ensure the response data is used for state update
     } catch (error) {
       console.error('Error adding movie to list:', error.response ? error.response.data : error);
