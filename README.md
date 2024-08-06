@@ -19,6 +19,10 @@ This is a full-stack movie review and personalized recommendation application bu
 - **Environment**: Virtualenv, Vite
 - **Version Control**: Git
 
+## Live Demo
+
+[Live Demo](https://movie-review-rec-app-5dee-o16afu2wz.vercel.app/)
+
 ## Prerequisites
 
 - Python: Version 3.8 or above
@@ -126,7 +130,3 @@ This is a full-stack movie review and personalized recommendation application bu
 
 - Database Connection Issues: Ensure PostgreSQL is running and credentials in settings.py are correct.
 - CORS Issues: Ensure the frontend URL is added to the allowed origins in the backend settings.
-
-## Future Improvements
-- Deployment using Docker and AWS.
-- Additional features like user profiles and movie recommendations based on genres.
