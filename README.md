@@ -1,4 +1,4 @@
-# Movie Review + Personalized Recommendation Full-stack App
+# FlixFinder - Movie Review + Personalized Recommendation Full-stack App
 
 This is a full-stack movie review and personalized recommendation application built with Django for the backend and React for the frontend.
 
@@ -19,9 +19,14 @@ This is a full-stack movie review and personalized recommendation application bu
 - **Environment**: Virtualenv, Vite
 - **Version Control**: Git
 
+## Limitations
+
+- **Dataset Size**: The recommendation system currently relies on a dataset of the top 1000 IMDb movies. If a user adds a movie not included in this dataset, recommendations may not be accurate or generated at all.
+- **Poster Quality**: Some movie posters may appear slightly blurry due to resolution limitations in the current dataset. I'm actively working on sourcing higher-quality images and expanding the dataset to improve both accuracy and presentation.
+
 ## Live Demo
 
-[Live Demo](https://movie-review-rec-app-5dee-o16afu2wz.vercel.app/)
+[Live Demo](https://movie-review-rec-app-5dee.vercel.app/)
 
 ## Prerequisites
 
