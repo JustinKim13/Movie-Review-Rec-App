@@ -16,6 +16,7 @@ This is a full-stack movie review and personalized recommendation application bu
 - **Backend**: Django, Django REST Framework
 - **Frontend**: React, React Router, Axios
 - **Database**: PostgreSQL
+- **Machine Learning**: Scikit-Learn
 - **Environment**: Virtualenv, Vite
 - **Version Control**: Git
 
